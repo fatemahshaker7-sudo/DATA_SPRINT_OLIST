@@ -158,3 +158,25 @@ plt.ylabel("Price gap (%)")
 plt.xticks(rotation=60, ha="right")
 plt.tight_layout()
 plt.show()
+
+#How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? 
+#reseller sell more with revenue of 598779.08 and mean 4.2 
+performance_overall= df.groupby('business_type').agg(
+    sales=('order_id','nunique'),
+    revenue=('price','sum'),
+    satisfaction=('review_score','mean')
+)
+performance_overall
+
+#does any manufacturer outperform a reseller? no
+performance= df.groupby(['business_type','seller_id']).agg(
+    sales=('order_id','nunique'),
+    revenue=('price','sum'),
+    satisfaction=('review_score','mean')
+)
+#plot1 (Total Sales)
+performance_overall['sales'].plot(kind='bar',title='Total Sales');
+#plot2(Revenue)
+performance_overall['revenue'].plot(kind='bar',title='Total Revenue');
+#plot3
+performance_overall['satisfaction'].plot(kind='bar',title='Mean Satisfaction Rate');
