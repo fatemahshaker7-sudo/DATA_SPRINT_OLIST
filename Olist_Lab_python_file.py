@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import nltk
 from wordcloud import WordCloud, STOPWORDS
+from translatepy import Translator
 
 # %%
 #merging data
@@ -117,8 +118,16 @@ worst_id = Red_flags.index
 # filter to get complaints only assuming they get 1,2 scores only
 complaints = df[df['seller_id'].isin(worst_id)&(df['review_score']<=2)]
 
+# Translate:
+## pip install translatepy
+complaints['review_comment_message_english'] = ( complaints['review_comment_message'].fillna('').apply(
+        lambda x: translator.translate(x, "English").result
+        if x else ''
+    )
+)
+
 # word cloud
-text= " ".join(complaints['review_comment_message'].dropna().astype(str).str.lower())
+text= " ".join(complaints['review_comment_message_english'].dropna().astype(str).str.lower())
 stopwords = set(STOPWORDS)
 stopwords.update(nltk_stopwords.words('portuguese'))
 stopwords.update(['producto','productos','produtos','produto','product', 'nao', 'pra', 'q', 'vc', 'tá', 'ta', 'pq', 'tb', 'tbm','comprei', 'compra', 'comprar', 'recebi', 'recebemos', 'receber',
