@@ -121,7 +121,7 @@ complaints = df[df['seller_id'].isin(worst_id)&(df['review_score']<=2)]
 text= " ".join(complaints['review_comment_message'].dropna().astype(str).str.lower())
 stopwords = set(STOPWORDS)
 stopwords.update(nltk_stopwords.words('portuguese'))
-stopwords.update(['producto','produto','product', 'nao', 'pra', 'q', 'vc', 'tá', 'ta', 'pq', 'tb', 'tbm','comprei', 'compra', 'comprar', 'recebi', 'recebemos', 'receber',
+stopwords.update(['producto','productos','produtos','produto','product', 'nao', 'pra', 'q', 'vc', 'tá', 'ta', 'pq', 'tb', 'tbm','comprei', 'compra', 'comprar', 'recebi', 'recebemos', 'receber',
     'pedido', 'pedi', 'loja', 'dia', 'dias', 'peço', 'favor', 'estou', 'vou',
     'ainda', 'então', 'ja', 'já', 'pois', 'sendo', 'outro', 'outros', 'mesmo' ])
 
