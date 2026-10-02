@@ -134,6 +134,22 @@ plt.imshow(wc,interpolation='bilinear')
 plt.axis('off')
 plt.show()
 
+# %% Are employees hiring/selecting the right sellers?
+# based on the sellers rating, number of orders
+orders_s = (df.drop_duplicates(['order_id', 'order_item_id']).groupby(['seller_id']).agg(sales = ('order_id', 'nunique'), review=('review_score','mean')))
+
+seller = merged_emp_df3[['seller_id','sr_id']].merge(orders_s, on='seller_id',how='left')
+
+seller['good'] = (seller['sales']>10) & (seller['review']>=3)
+sr_summary = seller.groupby('sr_id')['good'].agg(sellers = 'size', good_pct='mean')
+sr_summary['good_pct']*=100
+sr_summary['not_good_pct'] = 100 - sr_summary['good_pct']
+sr_summary =sr_summary[sr_summary['sellers']>=3].sort_values('good_pct')
+print(sr_summary.round(2))
+
+sr_summary[['good_pct','not_good_pct']].plot(kind = 'barh', stacked = True , figsize=(12,6), color = ['green', 'lightgrey'])
+plt.tight_layout(); plt.show()
+
 
 # %%
 # drop any null
@@ -159,6 +175,7 @@ plt.xticks(rotation=60, ha="right")
 plt.tight_layout()
 plt.show()
 
+# %%
 #Q:How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? 
 #reseller sell more with revenue of 598779.08 and mean score 4.2 , sales 3922
 performance_overall= df.groupby('business_type').agg(
@@ -173,13 +190,17 @@ performance= df.groupby(['business_type','seller_id']).agg(
     revenue=('price','sum'),
     satisfaction=('review_score','mean')
 )
+# %%
 #plot1 (Total Sales)
 performance_overall['sales'].plot(kind='bar',title='Total Sales');
+# %%
 #plot2(Revenue)
 performance_overall['revenue'].plot(kind='bar',title='Total Revenue');
+# %%
 #plot3
 performance_overall['satisfaction'].plot(kind='bar',title='Mean Satisfaction Rate');
 
+# %%
 #Do high-performing sellers specialize in narrow catalogs (niche) or wide catalogs (generalist)??? 
 catalog= df.groupby('seller_id').agg(
     unique_products=('product_id','nunique'),
@@ -203,7 +224,7 @@ this_filter=(seller_per['satisfaction'] <=2) & (seller_per['revenue']<50) & (sel
 redfalg_ids=seller_per[this_filter].index
 redfalg_ids
 
-
+# %%
 #Lead rate in olist
 total_lead=dfs['marketing']['mql_id'].nunique()
 leads_won= dfs['deals']['mql_id'].nunique()
