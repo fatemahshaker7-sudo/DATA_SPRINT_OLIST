@@ -177,7 +177,7 @@ pivot["price_gap"] = (pivot["reseller"] - pivot["manufacturer"]) / pivot["manufa
 # bar chart price gap
 order = pivot.dropna(subset=["price_gap"]).sort_values("price_gap", ascending=False)
 plt.figure(figsize=(12, 6))
-sns.barplot(data=order, x="business_segment", y="price_gap")
+sns.barplot(data=order, x="business_segment", y="price_gap", color="grey")
 plt.axhline(0, color="red", linestyle="--")
 plt.ylabel("Price gap (%)")
 plt.xticks(rotation=60, ha="right")
