@@ -3,6 +3,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import nltk
 # %%
 #merging data
 
@@ -107,7 +108,32 @@ chart = seller_rating.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, tit
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0);
 # %%
 
+nltk.download('stopwords')
+from nltk.corpus import stopwords as nltk_stopwords
 
+worst_id = Red_flags.index
+# filter to get complaints only assuming they get 1,2 scores only
+complaints = df[df['seller_id'].isin(worst_id)&(df['review_score']<=2)]
+
+# word cloud
+text= " ".join(complaints['review_comment_message'].dropna().astype(str).str.lower())
+stopwords = set(STOPWORDS)
+stopwords.update(nltk_stopwords.words('portuguese'))
+stopwords.update(['producto','produto','product', 'nao', 'pra', 'q', 'vc', 'tá', 'ta', 'pq', 'tb', 'tbm','comprei', 'compra', 'comprar', 'recebi', 'recebemos', 'receber',
+    'pedido', 'pedi', 'loja', 'dia', 'dias', 'peço', 'favor', 'estou', 'vou',
+    'ainda', 'então', 'ja', 'já', 'pois', 'sendo', 'outro', 'outros', 'mesmo' ])
+
+wc = WordCloud(
+    width = 1200, height=600, background_color= "white",
+    stopwords=stopwords, colormap="viridis").generate(text)
+
+plt.figure(figsize=(12,6))
+plt.imshow(wc,interpolation='bilinear')
+plt.axis('off')
+plt.show()
+
+
+# %%
 # drop any null
 d = df.dropna(subset=["business_segment", "business_type", "price"])
 d = d[d["business_type"].isin(["reseller", "manufacturer"])]
