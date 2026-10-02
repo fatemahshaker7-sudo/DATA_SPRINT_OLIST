@@ -159,15 +159,14 @@ plt.xticks(rotation=60, ha="right")
 plt.tight_layout()
 plt.show()
 
-#How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? 
-#reseller sell more with revenue of 598779.08 and mean 4.2 
+#Q:How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? 
+#reseller sell more with revenue of 598779.08 and mean score 4.2 , sales 3922
 performance_overall= df.groupby('business_type').agg(
     sales=('order_id','nunique'),
     revenue=('price','sum'),
     satisfaction=('review_score','mean')
 )
 performance_overall
-
 #does any manufacturer outperform a reseller? no
 performance= df.groupby(['business_type','seller_id']).agg(
     sales=('order_id','nunique'),
@@ -180,3 +179,54 @@ performance_overall['sales'].plot(kind='bar',title='Total Sales');
 performance_overall['revenue'].plot(kind='bar',title='Total Revenue');
 #plot3
 performance_overall['satisfaction'].plot(kind='bar',title='Mean Satisfaction Rate');
+
+#Do high-performing sellers specialize in narrow catalogs (niche) or wide catalogs (generalist)??? 
+catalog= df.groupby('seller_id').agg(
+    unique_products=('product_id','nunique'),
+    sales=('order_id','nunique'),
+    revenue=('price','sum'),
+    satisfaction=('review_score','mean')
+)
+catalog[['unique_products','sales','revenue','satisfaction']].corr() #can make heatmap
+#wider catalog(198-399) products
+catalog.sort_values('unique_products',ascending=False).head(10)
+#narrow cat
+catalog.sort_values('unique_products',ascending=True).head(10)
+
+#redfalg ids
+seller_per= df.groupby('seller_id').agg(
+    sales=('order_id','nunique'),
+    revenue=('price','sum'),
+    satisfaction=('review_score','mean')
+)
+this_filter=(seller_per['satisfaction'] <=2) & (seller_per['revenue']<50) & (seller_per['sales']<15)
+redfalg_ids=seller_per[this_filter].index
+redfalg_ids
+
+
+#Lead rate in olist
+total_lead=dfs['marketing']['mql_id'].nunique()
+leads_won= dfs['deals']['mql_id'].nunique()
+rate=(leads_won/total_lead)*100 #only 10% became sellers
+print(total_lead,leads_won,rate)
+
+marketingdf= dfs['marketing'].merge(
+    dfs['deals'], on='mql_id',how='left')
+#which channel leads won more?? 
+marketingdf['converted']=marketingdf['won_date'].notna()
+marketingdf['converted'].value_counts()
+won_by_origin=marketingdf.groupby('origin').agg(
+    total_leads=('mql_id','count'),
+    won_leads=('converted','sum'),
+
+)
+won_by_origin['rate']=(won_by_origin['won_leads']/won_by_origin['total_leads'])*100
+won_by_origin=won_by_origin.sort_values(by='rate',ascending=False).round(2)
+won_by_origin
+
+#plot: leads origins by rate
+won_by_origin['rate'].plot(kind='bar')
+
+plt.xlabel("Channels")
+plt.ylabel("Rate")
+plt.title("Lead origins by Rate");
