@@ -260,3 +260,128 @@ won_by_origin['rate'].plot(kind='bar')
 plt.xlabel("Channels")
 plt.ylabel("Rate")
 plt.title("Lead origins by Rate");
+
+# %%
+# Describe the different types of channels Olist uses to retain sellers.
+channels_Olist = df.groupby("origin").agg(sellers=("seller_id", "nunique"), revenue=("price", "sum"), avg_review=("review_score", "mean")).sort_values(by="sellers", ascending=False)
+channels_Olist = channels_Olist.reset_index()
+
+fig, ax1 = plt.subplots(figsize=(10, 6))
+sns.barplot(data=channels_Olist, x="origin", y="sellers", ax=ax1, color="gray")
+ax1.set_ylabel("Number of sellers")
+ax1.tick_params(axis="x", rotation=45)
+
+ax2 = ax1.twinx()
+ax2.plot(channels_Olist["origin"], channels_Olist["avg_review"], color="maroon", marker="o")
+ax2.set_ylabel("Average review score")
+ax2.set_ylim(1, 5)
+
+plt.tight_layout()
+plt.show()
+
+# %%
+fig, ax1 = plt.subplots(figsize=(10, 6))
+sns.barplot(data=channels_Olist, x="origin", y="revenue", ax=ax1, color="gray")
+ax1.set_ylabel("Revenue")
+ax1.tick_params(axis="x", rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+# %%
+# What is the price gap between resellers and manufacturers.
+filtered_df = df[df["business_type"].isin(["reseller", "manufacturer"])]
+
+median_price = filtered_df.groupby("business_type")["price"].median()
+
+overall_gap = (median_price["reseller"] - median_price["manufacturer"]) / median_price["manufacturer"] * 100
+
+# print(median_price)
+# print(overall_gap)
+
+stats = filtered_df.pivot_table(index="business_segment", columns="business_type", values="price", aggfunc=["median", "count"])
+
+
+gap_table = stats["median"].copy()
+
+
+gap_table["Number_manufacturer"] = stats["count"]["manufacturer"]
+gap_table["Number_reseller"] = stats["count"]["reseller"]
+
+# gap_table
+
+gap_table = gap_table[(gap_table["Number_manufacturer"] >= 30) & (gap_table["Number_reseller"] >= 30)]
+
+# gap_table
+
+gap_table["gap_price"] = (gap_table["reseller"] - gap_table["manufacturer"]) / gap_table["manufacturer"] * 100
+
+# gap_table
+
+gap_table = gap_table.sort_values("gap_price", ascending=False).reset_index()
+
+# gap_table
+
+plt.figure(figsize=(10, 6))
+colors = ['maroon' if value > 0 else 'grey' for value in gap_table["gap_price"]]
+ax = sns.barplot(data=gap_table, x="business_segment", y="gap_price", palette=colors)
+ax.plot([], 'o', color="maroon", label="Reseller > Manufacturer")
+ax.plot([], 'o', color="grey", label="Manufacturer > Reseller")
+ax.legend(loc="upper right", fontsize=10, markerscale=1 ,handlelength=2, handleheight=3)
+plt.axhline(0, color="red", linestyle="--")
+plt.ylabel("Price gap (%, median)")
+plt.xlabel("")
+plt.xticks(rotation=90, ha="right")
+plt.tight_layout()
+plt.show()
+
+
+# %%
+# For identical or substitute product categories, what is the price markup of resellers compared to direct manufacturers.
+filtered_df = df_category[df_category["business_type"].isin(["reseller", "manufacturer"])]
+
+median_price = filtered_df.groupby("business_type")["price"].median()
+
+overall_gap = (median_price["reseller"] - median_price["manufacturer"]) / median_price["manufacturer"] * 100
+
+# print(median_price)
+# print(overall_gap)
+
+stats = filtered_df.pivot_table(index="product_category_name_english", columns="business_type", values="price", aggfunc=["median", "count"])
+
+
+gap_table = stats["median"].copy()
+
+# print(gap_table)
+
+
+gap_table["Number_manufacturer"] = stats["count"]["manufacturer"]
+gap_table["Number_reseller"] = stats["count"]["reseller"]
+
+# print(gap_table)
+
+gap_table = gap_table[(gap_table["Number_manufacturer"] > 0) & (gap_table["Number_reseller"] > 0)]
+
+# gap_table
+
+gap_table["gap_price"] = (gap_table["reseller"] - gap_table["manufacturer"]) / gap_table["manufacturer"] * 100
+
+# print(gap_table)
+
+gap_table = gap_table.sort_values("gap_price", ascending=False).reset_index()
+
+# gap_table
+
+plt.figure(figsize=(20, 15))
+colors = ['maroon' if value > 0 else 'grey' for value in gap_table["gap_price"]]
+ax = sns.barplot(data=gap_table, x="product_category_name_english", y="gap_price", palette=colors)
+ax.plot([], 'o', color="maroon", label="Reseller > Manufacturer")
+ax.plot([], 'o', color="grey", label="Manufacturer > Reseller")
+ax.legend(loc="upper right", fontsize=20, markerscale=5 ,handlelength=5, handleheight=5)
+ax.bar_label(ax.containers[0], fmt="%.0f%%")
+plt.axhline(0, color="red", linestyle="--")
+plt.ylabel("Price gap (%, median)")
+plt.xlabel("")
+plt.xticks(rotation=90, ha="right")
+plt.tight_layout()
+plt.show()
