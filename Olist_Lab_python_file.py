@@ -106,3 +106,27 @@ seller_rating= df.groupby('business_type')['review_score'].mean()
 chart = seller_rating.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Rating per Bussines Type', xlabel = '');
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0);
 # %%
+
+
+# drop any null
+d = df.dropna(subset=["business_segment", "business_type", "price"])
+d = d[d["business_type"].isin(["reseller", "manufacturer"])]
+
+# mean for eeach type of segments
+avg = d.groupby(["business_segment", "business_type"])["price"].mean().reset_index()
+
+# pivot
+pivot = avg.pivot(index="business_segment", columns="business_type", values="price").reset_index()
+
+# price gap
+pivot["price_gap"] = (pivot["reseller"] - pivot["manufacturer"]) / pivot["manufacturer"] * 100
+
+# bar chart price gap
+order = pivot.dropna(subset=["price_gap"]).sort_values("price_gap", ascending=False)
+plt.figure(figsize=(12, 6))
+sns.barplot(data=order, x="business_segment", y="price_gap")
+plt.axhline(0, color="red", linestyle="--")
+plt.ylabel("Price gap (%)")
+plt.xticks(rotation=60, ha="right")
+plt.tight_layout()
+plt.show()
