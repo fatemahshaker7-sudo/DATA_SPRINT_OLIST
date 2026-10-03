@@ -48,15 +48,17 @@ df.columns
 # %%
 # Visualizations
 # %%
-def clean_chart(chart,labels=True,fmt='%.2f' , rota =0):
+def clean_chart(chart,labels=True,fmt='%.2f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left'):
     ''' This function removes the borders, grid, and y-axis of the charts and labels the colomns on the top
-     '''
+    and saves the chart as png with transparent background
+      '''
     if labels:
         for container in chart.containers:
             chart.bar_label(container, fmt=fmt, padding = 3, rotation = rota)
-    chart.get_yaxis().set_visible(False)
+    chart.get_yaxis().set_visible(y_vis)
+    chart.get_xaxis().set_visible(x_vis)
     chart.grid(False)
-    chart.spines[['left','right','top']].set_visible(False)
+    chart.spines[[left_bottom,'right','top']].set_visible(False)
     chart.margins(y=0.12)
     title = chart.get_title().lower().replace(' ', '_')
     chart.figure.savefig(f'{title}.png', transparent=True, dpi=300, bbox_inches='tight')
@@ -67,7 +69,7 @@ def clean_chart(chart,labels=True,fmt='%.2f' , rota =0):
 order_num_type= df.groupby('business_type')['order_id'].count().sort_values(ascending=False)
 chart = order_num_type.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Most Successful Seller Based on Order Counts', xlabel = '');
 #chart = plt.bar(x=order_num_type.index, height=order_num_type.values);
-clean_chart(chart,labels=True,fmt='%.0f' , rota =0);
+clean_chart(chart,labels=True,fmt='%.0f' , rota =0, y_vis= False,  x_vis=True, left_bottom = 'left')
 # %%
 #How do sellers compare across business types?
 plt.figure(figsize =(17,12))
@@ -75,12 +77,12 @@ chart = sns.countplot(data=df, x='business_segment', width = 1, hue='business_ty
 plt.xlabel('')
 plt.title('Bussiness Type Count per Segment')
 plt.xticks(rotation=90);
-clean_chart(chart,labels=True,fmt='%.0f' , rota =0);
+clean_chart(chart,labels=True,fmt='%.0f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
 #Are resellers more expensive than manufacturers? yes
 price_filter= df.groupby('business_type')['price'].mean()
 chart = price_filter.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Most Expensive Bussiness Type', xlabel = '');
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0);
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
 # Who are the red-flag (underperforming) sellers? FS
 # avarage score and number of reviews per seller
@@ -89,6 +91,7 @@ seller_perform = df.groupby('seller_id')['review_score'].agg(['mean','count'])
 Red_flags = seller_perform[seller_perform['count']>=10].nsmallest(10,'mean')
 # plot the mean only
 chart = Red_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 underperforming sellers', xlabel = '');
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
 #Who are the most successful sellers? the opposit of above . FS
@@ -98,17 +101,19 @@ seller_perform = df.groupby('seller_id')['review_score'].agg(['mean','count'])
 green_flags = seller_perform[seller_perform['count']>=1000].nlargest(10,'mean')
 # plot the mean only
 chart = green_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 Successful sellers', xlabel = '');
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
+
 # %%
 #Do manufacturers ship orders faster to carriers than resellers, and how does this affect seller ratings? FS
 df['delivery_days'] = (df['order_delivered_customer_date']- df['order_purchase_timestamp']).dt.days
 order_delivery= df.groupby('business_type')['delivery_days'].mean()
 chart = order_delivery.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Shipping Days per Bussines Type', xlabel = '');
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0);
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
 #and how does this affect seller ratings
 seller_rating= df.groupby('business_type')['review_score'].mean()
 chart = seller_rating.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Rating per Bussines Type', xlabel = '');
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0);
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
 
 nltk.download('stopwords')
@@ -157,8 +162,8 @@ sr_summary =sr_summary[sr_summary['sellers']>=3].sort_values('good_pct')
 print(sr_summary.round(2))
 
 sr_summary[['good_pct','not_good_pct']].plot(kind = 'barh', stacked = True , figsize=(12,6), color = ['green', 'lightgrey'])
-plt.tight_layout(); plt.show()
-
+sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
+clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
 # drop any null
