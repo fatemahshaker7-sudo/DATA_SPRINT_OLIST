@@ -170,6 +170,12 @@ sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
+
+products = pd.read_csv("olist_products_dataset.csv")
+translation = pd.read_csv("product_category_name_translation.csv")
+products = products.merge(translation, on="product_category_name", how="left")
+df_category = df.merge( products[["product_id", "product_category_name_english"]], on="product_id", how="left")
+
 # drop any null
 d = df.dropna(subset=["business_segment", "business_type", "price"])
 d = d[d["business_type"].isin(["reseller", "manufacturer"])]
