@@ -119,26 +119,25 @@ clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, le
 
 nltk.download('stopwords')
 from nltk.corpus import stopwords as nltk_stopwords
-
+translator = Translator()
 worst_id = Red_flags.index
 # filter to get complaints only assuming they get 1,2 scores only
-complaints = df[df['seller_id'].isin(worst_id)&(df['review_score']<=2)]
+complaints = df[df['seller_id'].isin(worst_id)&(df['review_score']<=2)].copy()
 
 # Translate:
 ## pip install translatepy
 complaints['review_comment_message_english'] = ( complaints['review_comment_message'].fillna('').apply(
-        lambda x: translator.translate(x, "English").result
-        if x else ''
-    )
-)
+        lambda x: translator.translate(x, "English").result if x else ''))
 
 # word cloud
 text= " ".join(complaints['review_comment_message_english'].dropna().astype(str).str.lower())
 stopwords = set(STOPWORDS)
-stopwords.update(nltk_stopwords.words('portuguese'))
-stopwords.update(['producto','productos','produtos','produto','product', 'nao', 'pra', 'q', 'vc', 'tá', 'ta', 'pq', 'tb', 'tbm','comprei', 'compra', 'comprar', 'recebi', 'recebemos', 'receber',
-    'pedido', 'pedi', 'loja', 'dia', 'dias', 'peço', 'favor', 'estou', 'vou',
-    'ainda', 'então', 'ja', 'já', 'pois', 'sendo', 'outro', 'outros', 'mesmo' ])
+stopwords.update(nltk_stopwords.words('english'))
+stopwords.update(['bought', 'buy', 'purchase', 'purchased', 'received', 'receive', 'order', 'ordered',
+    'product', 'products', 'item', 'store', 'seller', 'day', 'days', 'time', 'one', 'two',
+    'will', 'going', 'know', 'want', 'still', 'even', 'already', 'yet', 'get', 'got', 'came',
+    'come', 'please', 'thank', 'thanks', 'would', 'could', 'much', 'also', 'really', 'just',
+    'like', 'said', 'back', 'delivered' ])
 
 wc = WordCloud(
     width = 1200, height=600, background_color= "white",
