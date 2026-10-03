@@ -269,6 +269,13 @@ won_by_origin['rate'].plot(kind='bar')
 plt.xlabel("Channels")
 plt.ylabel("Rate")
 plt.title("Lead origins by Rate");
+#most common profiles
+
+conveted_profile.head(6).plot(kind='bar',color='grey');
+plt.xlabel("Lead Behaviour Profile")
+plt.ylabel("Number of Converted Seller")
+plt.title("Most Common Profiles Among Olist Sellers");
+plt.xticks(rotation=0);
 
 # %%
 # Describe the different types of channels Olist uses to retain sellers.
