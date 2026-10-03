@@ -382,7 +382,7 @@ gap_table["Number_reseller"] = stats["count"]["reseller"]
 
 # print(gap_table)
 
-gap_table = gap_table[(gap_table["Number_manufacturer"] > 0) & (gap_table["Number_reseller"] > 0)]
+gap_table = gap_table[(gap_table["Number_manufacturer"] > 10) & (gap_table["Number_reseller"] > 10)]
 
 # gap_table
 
