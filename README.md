@@ -111,7 +111,7 @@ Charts are exported to `Presentation/images/` by `clean_chart()` (transparent PN
 - `average_rating_by_delivery_time.png` – rating vs. delivery time by business type
 - Price gap (reseller vs. manufacturer) by business segment and product category
 - Lead conversion rate by origin channel
-- Good vs. not-good seller share by sales rep
+- Good vs. not-good seller share by sales representative
 
 ## Conclusions and Recommendations
 
@@ -120,7 +120,7 @@ Charts are exported to `Presentation/images/` by `clean_chart()` (transparent PN
 2. Resellers charge more than manufacturers, but the gap depends heavily on segment and category.
 3. Slower delivery is associated with lower review scores, and complaints from the worst sellers (word cloud of translated 1-2 star reviews) center on delivery and product issues.
 4. Roughly 10% of MQLs convert to sellers, and channels differ in conversion rate, seller count, revenue, and average review.
-5. The share of good sellers varies by sales rep.
+5. The share of good sellers varies by sales representative.
 
 **Recommendations**
 - Prioritise reseller recruitment while monitoring manufacturers for niche opportunities.
