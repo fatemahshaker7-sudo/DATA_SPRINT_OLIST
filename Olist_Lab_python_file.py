@@ -106,7 +106,7 @@ clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, le
 
 # %%
 #Do manufacturers ship orders faster to carriers than resellers, and how does this affect seller ratings? FS
-df['delivery_days'] = (df['order_delivered_customer_date']- df['order_purchase_timestamp']).dt.days
+df['delivery_days'] = (df['order_delivered_carrier_date']- df['order_purchase_timestamp']).dt.days
 order_delivery= df.groupby('business_type')['delivery_days'].mean()
 chart = order_delivery.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Shipping Days per Bussines Type', xlabel = '' , color = 'lightgrey');
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
