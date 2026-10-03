@@ -106,15 +106,19 @@ clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, le
 
 # %%
 #Do manufacturers ship orders faster to carriers than resellers, and how does this affect seller ratings? FS
-df['delivery_days'] = (df['order_delivered_carrier_date']- df['order_purchase_timestamp']).dt.days
-order_delivery= df.groupby('business_type')['delivery_days'].mean()
-chart = order_delivery.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Shipping Days per Bussines Type', xlabel = '' , color = 'lightgrey');
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
-# %%
-#and how does this affect seller ratings
-seller_rating= df.groupby('business_type')['review_score'].mean()
-chart = seller_rating.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Average Rating per Bussines Type', xlabel = '' , color = 'lightgrey');
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
+
+df['delivery_days'] = (df['order_delivered_customer_date'] - df['order_purchase_timestamp']).dt.days
+
+# Bucket delivery time, then average rating per bucket and business type
+df['delivery_bucket'] = pd.cut(df['delivery_days'], bins=[0, 7, 14, 21, 30, df['delivery_days'].max()], labels=['0-7', '8-14', '15-21', '22-30', '30+'])
+rating_by_bucket = (df.groupby(['delivery_bucket', 'business_type'], observed=True)['review_score'].mean().unstack())
+
+ax = rating_by_bucket.plot(kind='line', marker='o', figsize=(9, 5), color = ['#800000', 'lightgrey'],title='Average Rating by Delivery Time')
+ax.set_xlabel('Delivery days')
+ax.set_ylabel('Average review score')
+plt.show()
+title = ax.get_title().lower().replace(' ', '_')
+ax.figure.savefig(f'{title}.png', transparent=True, dpi=300, bbox_inches='tight')
 # %%
 
 nltk.download('stopwords')
