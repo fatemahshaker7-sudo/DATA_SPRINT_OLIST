@@ -166,7 +166,7 @@ sr_summary =sr_summary[sr_summary['sellers']>=3].sort_values('good_pct')
 print(sr_summary.round(2))
 
 sr_summary[['good_pct','not_good_pct']].plot(kind = 'barh', stacked = True , figsize=(12,6), color = ['#800000', 'lightgrey'])
-sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
+chart = sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
