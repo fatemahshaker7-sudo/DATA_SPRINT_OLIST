@@ -32,7 +32,7 @@ Between 2017 and 2018 in Brazil, Olist faced inconsistencies in sellers performa
 │   │   ├── olist_products_dataset.csv
 │   │   └── product_category_name_translation.csv
 │   └── Cleaned/
-│       └── merged_seller_orders.csv        # merged + cleaned table 
+│       └── olist_cleaned_merged.csv        # merged + cleaned table 
 ├── Code/
 │    └── Olist_Lab_python_file.py            # load raw CSVs, parse dates, EDA, visualizations and analyse 
 ├── Presentation/
