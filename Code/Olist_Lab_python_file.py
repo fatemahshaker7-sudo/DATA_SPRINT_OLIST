@@ -48,13 +48,13 @@ df.columns
 # %%
 # Visualizations
 # %%
-def clean_chart(chart,labels=True,fmt='%.2f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left'):
+def clean_chart(chart,labels=True,fmt='%.2f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left', label_size=10 ):
     ''' This function removes the borders, grid, and y-axis of the charts and labels the colomns on the top
     and saves the chart as png with transparent background
       '''
     if labels:
         for container in chart.containers:
-            chart.bar_label(container, fmt=fmt, padding = 3, rotation = rota)
+            chart.bar_label(container, fmt=fmt, padding = 3, rotation = rota, fontsize=label_size)
     chart.get_yaxis().set_visible(y_vis)
     chart.get_xaxis().set_visible(x_vis)
     chart.grid(False)
@@ -400,11 +400,11 @@ ax = sns.barplot(data=gap_table, x="product_category_name_english", y="gap_price
 ax.plot([], 'o', color="maroon", label="Reseller > Manufacturer")
 ax.plot([], 'o', color="grey", label="Manufacturer > Reseller")
 ax.legend(loc="upper right", fontsize=20, markerscale=5 ,handlelength=5, handleheight=5)
-ax.bar_label(ax.containers[0], fmt="%.0f%%")
+#ax.bar_label(ax.containers[0], fmt="%.0f%%")
 plt.axhline(0, color="red", linestyle="--")
 plt.ylabel("Price gap (%, median)")
 plt.xlabel("")
 plt.xticks(rotation=90, ha="right")
 plt.tight_layout()
 plt.show()
-clean_chart(ax,labels=True,fmt='%.0f%%' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
+clean_chart(ax,labels=True,fmt='%.0f%%' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left', label_size=15)
