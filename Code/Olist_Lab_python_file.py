@@ -81,7 +81,7 @@ plt.xticks(rotation=90);
 clean_chart(chart,labels=True,fmt='%.0f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
 #Are resellers more expensive than manufacturers? yes
-price_filter= df.groupby('business_type')['price'].mean()
+price_filter= df.groupby('business_type')['price'].median()
 chart = price_filter.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Most Expensive Bussiness Type', xlabel = '', color = 'lightgrey');
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, left_bottom = 'left')
 # %%
@@ -268,21 +268,23 @@ won_by_origin=marketingdf.groupby('origin').agg(
 won_by_origin['rate']=(won_by_origin['won_leads']/won_by_origin['total_leads'])*100
 won_by_origin=won_by_origin.sort_values(by='rate',ascending=False).round(2)
 won_by_origin
-
+won_by_origin.index = won_by_origin.index.str.replace('_', ' ')
 #plot: leads origins by rate
-won_by_origin['rate'].plot(kind='bar')
-
+won_by_origin['rate'].plot(kind='bar', color='grey')
 plt.xlabel("Channels")
 plt.ylabel("Rate")
 plt.title("Lead origins by Rate");
-#most common profiles
+plt.xticks(rotation=45);
 
+#most common profiles
+conveted_profile=marketingdf[ 
+    marketingdf['converted']==True
+    ]['lead_behaviour_profile'].value_counts()
 conveted_profile.head(6).plot(kind='bar',color='grey');
 plt.xlabel("Lead Behaviour Profile")
 plt.ylabel("Number of Converted Seller")
 plt.title("Most Common Profiles Among Olist Sellers");
 plt.xticks(rotation=0);
-
 # %%
 # Describe the different types of channels Olist uses to retain sellers.
 channels_Olist = df.groupby("origin").agg(sellers=("seller_id", "nunique"), revenue=("price", "sum"), avg_review=("review_score", "mean")).sort_values(by="sellers", ascending=False)
