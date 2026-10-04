@@ -64,14 +64,14 @@ def clean_chart(chart,labels=True,fmt='%.2f' , rota =0, y_vis= False, x_vis=True
     chart.figure.savefig(f'{title}.png', transparent=True, dpi=300, bbox_inches='tight')
     return chart
 # %%
-#Are resellers the most successful sellers?
+#Are resellers the most successful sellers? ALL
 #score_type= df.groupby('business_type')['review_score'].value_counts()
 order_num_type= df.groupby('business_type')['order_id'].count().sort_values(ascending=False)
 chart = order_num_type.plot(kind = 'bar', stacked=False, rot=0, width = 0.90, title='Most Successful Seller Based on Order Counts', xlabel = '', color = 'lightgrey');
 #chart = plt.bar(x=order_num_type.index, height=order_num_type.values);
 clean_chart(chart,labels=True,fmt='%.0f' , rota =0, y_vis= False,  x_vis=True, left_bottom = 'left')
 # %%
-#How do sellers compare across business types?
+#How do sellers compare across business types? ALL
 palette = {"manufacturer": "#800000", "reseller": "#9C9587", "other": "#c9b79c"}
 plt.figure(figsize =(17,12))
 chart = sns.countplot(data=df, x='business_segment', width = 1, hue='business_type', palette=palette)
@@ -92,7 +92,7 @@ all_sellers = sorted(df['seller_id'].unique())
 seller_map = {old: f'seller {i}' for i, old in enumerate(all_sellers, start=1)}
 
 seller_perform = df.groupby('seller_id')['review_score'].agg(['mean','count'])
-# consider sellers with at least 10 review only, take the 10 lowest only 
+# consider sellers with at least 10 review only, take the 10 lowest only FS
 Red_flags = seller_perform[seller_perform['count']>=10].nsmallest(10,'mean').sort_values('mean', ascending=False)
 Red_flags.index = Red_flags.index.map(seller_map)
 
@@ -161,7 +161,7 @@ plt.imshow(wc,interpolation='bilinear')
 plt.axis('off')
 plt.show()
 
-# %% Are employees hiring/selecting the right sellers?
+# %% Are employees hiring/selecting the right sellers? FS
 # based on the sellers rating, number of orders
 orders_s = (df.drop_duplicates(['order_id', 'order_item_id']).groupby(['seller_id']).agg(sales = ('order_id', 'nunique'), review=('review_score','mean')))
 
@@ -184,7 +184,7 @@ sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
 clean_chart(chart,labels=True,fmt='%.1f%%' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
-
+# FM
 products = pd.read_csv("olist_products_dataset.csv")
 translation = pd.read_csv("product_category_name_translation.csv")
 products = products.merge(translation, on="product_category_name", how="left")
@@ -214,7 +214,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-#Q:How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? 
+#Q:How do resellers perform compared to manufacturers in terms of sales, revenue, and customer satisfaction? NA
 #reseller sell more with revenue of 598779.08 and mean score 4.2 , sales 3922
 performance_overall= df.groupby('business_type').agg(
     sales=('order_id','nunique'),
@@ -222,7 +222,7 @@ performance_overall= df.groupby('business_type').agg(
     satisfaction=('review_score','mean')
 )
 performance_overall
-#does any manufacturer outperform a reseller? no
+#does any manufacturer outperform a reseller? NA
 performance= df.groupby(['business_type','seller_id']).agg(
     sales=('order_id','nunique'),
     revenue=('price','sum'),
@@ -245,7 +245,7 @@ plt.xlabel("Business Type")
 plt.ylabel("Mean Score")
 
 # %%
-#Do high-performing sellers specialize in narrow catalogs (niche) or wide catalogs (generalist)??? 
+#Do high-performing sellers specialize in narrow catalogs (niche) or wide catalogs (generalist)??? NA
 catalog= df.groupby('seller_id').agg(
     unique_products=('product_id','nunique'),
     sales=('order_id','nunique'),
@@ -269,7 +269,7 @@ redfalg_ids=seller_per[this_filter].index
 redfalg_ids
 
 # %%
-#Lead rate in olist
+#Lead rate in olist NA
 total_lead=dfs['marketing']['mql_id'].nunique()
 leads_won= dfs['deals']['mql_id'].nunique()
 rate=(leads_won/total_lead)*100 #only 10% became sellers
@@ -296,7 +296,7 @@ plt.ylabel("Rate")
 plt.title("Lead origins by Rate");
 plt.xticks(rotation=45);
 
-#most common profiles
+#most common profiles NA
 conveted_profile=marketingdf[ 
     marketingdf['converted']==True
     ]['lead_behaviour_profile'].value_counts()
@@ -306,7 +306,7 @@ plt.ylabel("Number of Converted Seller")
 plt.title("Most Common Profiles Among Olist Sellers");
 plt.xticks(rotation=0);
 # %%
-# Describe the different types of channels Olist uses to retain sellers.
+# Describe the different types of channels Olist uses to retain sellers. FM
 channels_Olist = df.groupby("origin").agg(sellers=("seller_id", "nunique"), revenue=("price", "sum"), avg_review=("review_score", "mean")).sort_values(by="sellers", ascending=False)
 channels_Olist = channels_Olist.reset_index()
 
@@ -333,7 +333,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# What is the price gap between resellers and manufacturers.
+# What is the price gap between resellers and manufacturers. FM
 filtered_df = df[df["business_type"].isin(["reseller", "manufacturer"])]
 
 median_price = filtered_df.groupby("business_type")["price"].median()
@@ -381,7 +381,7 @@ plt.show()
 
 
 # %%
-# For identical or substitute product categories, what is the price markup of resellers compared to direct manufacturers.
+# For identical or substitute product categories, what is the price markup of resellers compared to direct manufacturers. FM
 filtered_df = df_category[df_category["business_type"].isin(["reseller", "manufacturer"])]
 
 median_price = filtered_df.groupby("business_type")["price"].median()
