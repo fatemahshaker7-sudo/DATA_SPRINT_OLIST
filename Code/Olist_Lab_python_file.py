@@ -219,7 +219,7 @@ performance= df.groupby(['business_type','seller_id']).agg(
 performance_overall['sales'].plot(kind='bar',title='Total Sales');
 # %%
 #plot2(Revenue)
-performance_overall['revenue'].plot(kind='bar',title='Total Revenue');
+performance_overall['revenue'].plot(kind='bar',title='Total Orders');
 # %%
 #plot3
 performance_overall['satisfaction'].plot(kind='bar',title='Mean Satisfaction Rate');
