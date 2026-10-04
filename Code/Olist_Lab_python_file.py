@@ -216,13 +216,19 @@ performance= df.groupby(['business_type','seller_id']).agg(
 )
 # %%
 #plot1 (Total Sales)
-performance_overall['sales'].plot(kind='bar',title='Total Sales');
+performance_overall['sales'].plot(kind='bar',title='Total Orders');
+plt.xlabel("Business Type")
+plt.ylabel("Sales")
 # %%
 #plot2(Revenue)
-performance_overall['revenue'].plot(kind='bar',title='Total Orders');
+performance_overall['revenue'].plot(kind='bar',title='Total Revenue');
+plt.xlabel("Business Type")
+plt.ylabel("Revenue")
 # %%
 #plot3
 performance_overall['satisfaction'].plot(kind='bar',title='Mean Satisfaction Rate');
+plt.xlabel("Business Type")
+plt.ylabel("Mean Score")
 
 # %%
 #Do high-performing sellers specialize in narrow catalogs (niche) or wide catalogs (generalist)??? 
