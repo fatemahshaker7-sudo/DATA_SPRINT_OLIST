@@ -87,21 +87,30 @@ clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= False, x_vis=True, le
 # %%
 # Who are the red-flag (underperforming) sellers? FS
 # avarage score and number of reviews per seller
+
+all_sellers = sorted(df['seller_id'].unique())
+seller_map = {old: f'seller {i}' for i, old in enumerate(all_sellers, start=1)}
+
 seller_perform = df.groupby('seller_id')['review_score'].agg(['mean','count'])
 # consider sellers with at least 10 review only, take the 10 lowest only 
-Red_flags = seller_perform[seller_perform['count']>=10].nsmallest(10,'mean')
+Red_flags = seller_perform[seller_perform['count']>=10].nsmallest(10,'mean').sort_values('mean', ascending=False)
+Red_flags.index = Red_flags.index.map(seller_map)
+
 # plot the mean only
-chart = Red_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 underperforming sellers', xlabel = '', color = 'lightgrey');
+chart = Red_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 underperforming sellers', xlabel = '', color = 'lightgrey', ylabel= 'Seller id');
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
 #Who are the most successful sellers? the opposit of above . FS
 # avarage score and number of reviews per seller
+
 seller_perform = df.groupby('seller_id')['review_score'].agg(['mean','count'])
 # consider sellers with at least 1000 review , take the 10 lowest only 
-green_flags = seller_perform[seller_perform['count']>=1000].nlargest(10,'mean')
+green_flags = seller_perform[seller_perform['count']>=1000].nlargest(10,'mean').sort_values('mean', ascending=True)
+green_flags.index = green_flags.index.map(seller_map)
+
 # plot the mean only
-chart = green_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 Successful sellers', xlabel = '' , color = 'lightgrey');
+chart = green_flags['mean'].plot(kind = 'barh', stacked=False, rot=0, width = 0.90, title='Top 10 Successful sellers', xlabel = '' , color = 'lightgrey', ylabel= 'Seller id');
 clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
@@ -158,16 +167,21 @@ orders_s = (df.drop_duplicates(['order_id', 'order_item_id']).groupby(['seller_i
 
 seller = merged_emp_df3[['seller_id','sr_id']].merge(orders_s, on='seller_id',how='left')
 
+sr_ids = sorted(seller['sr_id'].unique())
+sr_map = {old: f'sr {i}' for i, old in enumerate(sr_ids, start=1)}
+seller['sr_label'] = seller['sr_id'].map(sr_map)
+
+
 seller['good'] = (seller['sales']>10) & (seller['review']>=3)
-sr_summary = seller.groupby('sr_id')['good'].agg(sellers = 'size', good_pct='mean')
+sr_summary = seller.groupby('sr_label')['good'].agg(sellers='size', good_pct='mean')
 sr_summary['good_pct']*=100
 sr_summary['not_good_pct'] = 100 - sr_summary['good_pct']
 sr_summary =sr_summary[sr_summary['sellers']>=3].sort_values('good_pct')
 print(sr_summary.round(2))
 
-chart = sr_summary[['good_pct','not_good_pct']].plot(kind = 'barh', stacked = True , figsize=(12,6), color = ['#800000', 'lightgrey'])
+chart = sr_summary[['good_pct','not_good_pct']].plot(kind = 'barh', stacked = True , figsize=(12,6), color = ['#800000', 'lightgrey'],  ylabel = 'Sales Representative')
 sns.move_legend(chart, "upper left", bbox_to_anchor=(1, 1))
-clean_chart(chart,labels=True,fmt='%.1f' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
+clean_chart(chart,labels=True,fmt='%.1f%%' , rota =0, y_vis= True, x_vis=False, left_bottom = 'bottom')
 
 # %%
 
