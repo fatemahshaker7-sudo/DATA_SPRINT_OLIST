@@ -1,5 +1,7 @@
 # Olist Sellers Evaluation Analysis​
 
+[![View Presentation](https://img.shields.io/badge/View-PowerPoint-D24726?logo=microsoftpowerpoint&logoColor=white)](https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/fatemahshaker7-sudo/DATA_SPRINT_OLIST/main/Presentation/Olist%20Present.pptx)
+
 ## Problem Statement
 
 Between 2017 and 2018 in Brazil, Olist faced inconsistencies in sellers performance across sales, revenue, and customer satisfaction, while lacking a clear understanding of what distinguishes successful sellers. This may negatively affect customer experience and business performance, creating a need to better understand its seller base and identify opportunities to increase profitability.​
@@ -37,6 +39,7 @@ Between 2017 and 2018 in Brazil, Olist faced inconsistencies in sellers performa
 │    └── Olist_Lab_python_file.py            # load raw CSVs, parse dates, EDA, visualizations and analyse 
 ├── Presentation/
 │   ├── Olist_Seller_Analysis.pdf
+│   ├── Olist Present.pptx
 │   └── images/                             # charts exported by clean_chart()
 ```
 
@@ -140,3 +143,9 @@ Charts are exported to `Presentation/images/` by `clean_chart()` (transparent PN
 - Olist. *Brazilian E-Commerce Public Dataset by Olist.* Kaggle. https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 - Olist. *Marketing Funnel by Olist.* Kaggle. https://www.kaggle.com/datasets/olistbr/marketing-funnel-olist
 - pandas, seaborn, matplotlib, NLTK, WordCloud, and translatepy documentation.
+
+## Acknowledgments
+
+Thanks to Fatema Butaher, Naof Almutaweaa and me for our work on [data analysis / modeling / the presentation], and to GA-DSB3 Instructrs for guidance throughout the project. The data comes from the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), used under its license.
+
+[![Contributors](https://contrib.rocks/image?repo=fatemahshaker7-sudo/DATA_SPRINT_OLIST)](https://github.com/fatemahshaker7-sudo/DATA_SPRINT_OLIST/graphs/contributors)
